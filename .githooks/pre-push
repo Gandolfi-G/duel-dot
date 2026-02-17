@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+printf "\n[math-duel] Vérification pre-push: lint + tests + build\n"
+npm run check

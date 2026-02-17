@@ -1,0 +1,31 @@
+{
+  "name": "math-duel",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "client",
+    "server",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "npm run build --workspace @math-duel/shared && concurrently -n shared,server,client -c cyan,green,magenta \"npm run dev --workspace @math-duel/shared\" \"npm run dev --workspace @math-duel/server\" \"npm run dev --workspace @math-duel/client\"",
+    "build": "npm run build --workspace @math-duel/shared && npm run build --workspace @math-duel/server && npm run build --workspace @math-duel/client",
+    "test": "npm run build --workspace @math-duel/shared && npm run test --workspace @math-duel/server && npm run test --workspace @math-duel/client",
+    "test:watch": "npm run build --workspace @math-duel/shared && concurrently -n server,client -c green,magenta \"npm run test:watch --workspace @math-duel/server\" \"npm run test:watch --workspace @math-duel/client\"",
+    "test:coverage": "npm run build --workspace @math-duel/shared && npm run test:coverage --workspace @math-duel/server && npm run test:coverage --workspace @math-duel/client",
+    "check": "npm run lint && npm run test && npm run build",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.20.1",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "typescript-eslint": "^8.23.0"
+  }
+}

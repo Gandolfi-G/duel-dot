@@ -1,0 +1,819 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [ 4 0 R 6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R ] /Count 7 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 1561 >>
+stream
+BT
+/F1 10 Tf
+1 0 0 1 50 792 Tm
+14 TL
+(GUIDE COMPLET DE MISE EN PRODUCTION - MATH DUEL) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(1. OBJECTIF) Tj
+T*
+() Tj
+T*
+(Ce document explique comment deployer le projet `math-duel` sur un serveur Linux \(Ubuntu\),) Tj
+T*
+(avec:) Tj
+T*
+(- backend Node.js \(Socket.IO\) en service permanent,) Tj
+T*
+(- frontend Vite servi par Nginx,) Tj
+T*
+(- HTTPS \(Let's Encrypt\),) Tj
+T*
+(- redemarrage automatique,) Tj
+T*
+(- procedure de mise a jour.) Tj
+T*
+() Tj
+T*
+(2. ARCHITECTURE RECOMMANDEE) Tj
+T*
+() Tj
+T*
+(Option conseillee \(simple et robuste\):) Tj
+T*
+(- Domaine public: `https://duel.example.com`) Tj
+T*
+(- Nginx sert le frontend \(`client/dist`\)) Tj
+T*
+(- Nginx reverse proxy `\\/socket.io\\/` et `\\/health` vers Node \(`127.0.0.1:3001`\)) Tj
+T*
+(- Process Node gere par PM2) Tj
+T*
+() Tj
+T*
+(POURQUOI CETTE OPTION) Tj
+T*
+() Tj
+T*
+(- Un seul domaine a gerer) Tj
+T*
+(- Pas de probleme CORS inter-domaines) Tj
+T*
+(- Certificat TLS unique) Tj
+T*
+() Tj
+T*
+(3. PREREQUIS) Tj
+T*
+() Tj
+T*
+(- Un serveur Ubuntu 22.04 ou 24.04) Tj
+T*
+(- Un nom de domaine pointant vers l'IP du serveur) Tj
+T*
+(- Un acces SSH) Tj
+T*
+(- Ports ouverts:) Tj
+T*
+(- 22 \(SSH\)) Tj
+T*
+(- 80 \(HTTP\)) Tj
+T*
+(- 443 \(HTTPS\)) Tj
+T*
+() Tj
+T*
+(4. PREPARATION DU SERVEUR) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.1 METTRE A JOUR LE SYSTEME) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    sudo apt update && sudo apt upgrade -y) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.2 INSTALLER LES OUTILS) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    sudo apt install -y git nginx ufw curl) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.3 INSTALLER NODE.JS 22 LTS) Tj
+T*
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1267 >>
+stream
+BT
+/F1 10 Tf
+1 0 0 1 50 792 Tm
+14 TL
+() Tj
+T*
+() Tj
+T*
+(    curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -) Tj
+T*
+(    sudo apt install -y nodejs) Tj
+T*
+(    node -v) Tj
+T*
+(    npm -v) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.4 INSTALLER PM2) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    sudo npm install -g pm2) Tj
+T*
+(    pm2 -v) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(4.5 FIREWALL) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    sudo ufw allow OpenSSH) Tj
+T*
+(    sudo ufw allow 'Nginx Full') Tj
+T*
+(    sudo ufw enable) Tj
+T*
+(    sudo ufw status) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(5. RECUPERER LE PROJET) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(5.1 CLONER LE REPO) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    cd /opt) Tj
+T*
+(    sudo git clone <URL_DU_REPO> math-duel) Tj
+T*
+(    sudo chown -R $USER:$USER /opt/math-duel) Tj
+T*
+(    cd /opt/math-duel) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(5.2 INSTALLER LES DEPENDANCES) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    npm ci) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(6. VARIABLES D'ENVIRONNEMENT IMPORTANTES) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Le backend lit:) Tj
+T*
+(- `PORT` \(defaut: `3001`\)) Tj
+T*
+(- `CLIENT_ORIGIN` \(defaut: `http://localhost:5173`\)) Tj
+T*
+() Tj
+T*
+(Le frontend lit a la compilation:) Tj
+T*
+(- `VITE_SERVER_URL` \(URL publique du serveur Socket.IO\)) Tj
+T*
+() Tj
+T*
+(Pour une install sur un seul domaine, utiliser:) Tj
+T*
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 1392 >>
+stream
+BT
+/F1 10 Tf
+1 0 0 1 50 792 Tm
+14 TL
+(- `CLIENT_ORIGIN=https://duel.example.com`) Tj
+T*
+(- `VITE_SERVER_URL=https://duel.example.com`) Tj
+T*
+() Tj
+T*
+(7. BUILD PRODUCTION) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Depuis `/opt/math-duel`:) Tj
+T*
+() Tj
+T*
+(    VITE_SERVER_URL=https://duel.example.com npm run build) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(A la fin:) Tj
+T*
+(- backend compile dans `server/dist`) Tj
+T*
+(- frontend compile dans `client/dist`) Tj
+T*
+() Tj
+T*
+(8. DEMARRER LE BACKEND AVEC PM2) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(8.1 CREER UN FICHIER PM2) Tj
+T*
+() Tj
+T*
+(Creer `/opt/math-duel/ecosystem.config.cjs`:) Tj
+T*
+() Tj
+T*
+(    module.exports = {) Tj
+T*
+(      apps: [) Tj
+T*
+(        {) Tj
+T*
+(          name: "math-duel-api",) Tj
+T*
+(          script: "server/dist/index.js",) Tj
+T*
+(          cwd: "/opt/math-duel",) Tj
+T*
+(          env: {) Tj
+T*
+(            NODE_ENV: "production",) Tj
+T*
+(            PORT: 3001,) Tj
+T*
+(            CLIENT_ORIGIN: "https://duel.example.com") Tj
+T*
+(          }) Tj
+T*
+(        }) Tj
+T*
+(      ]) Tj
+T*
+(    };) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(8.2 LANCER ET PERSISTER) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    cd /opt/math-duel) Tj
+T*
+(    pm2 start ecosystem.config.cjs) Tj
+T*
+(    pm2 save) Tj
+T*
+(    pm2 startup) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Executer la commande affichee par `pm2 startup` \(une seule fois\).) Tj
+T*
+() Tj
+T*
+(8.3 VERIFIER) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    pm2 status) Tj
+T*
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+endobj
+11 0 obj
+<< /Length 1827 >>
+stream
+BT
+/F1 10 Tf
+1 0 0 1 50 792 Tm
+14 TL
+(    pm2 logs math-duel-api --lines 100) Tj
+T*
+(    curl -i http://127.0.0.1:3001/health) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(9. CONFIGURER NGINX) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Creer `/etc/nginx/sites-available/math-duel`:) Tj
+T*
+() Tj
+T*
+(    server {) Tj
+T*
+(        listen 80;) Tj
+T*
+(        listen [::]:80;) Tj
+T*
+(        server_name duel.example.com;) Tj
+T*
+() Tj
+T*
+(        root /opt/math-duel/client/dist;) Tj
+T*
+(        index index.html;) Tj
+T*
+() Tj
+T*
+(        # Socket.IO \(WebSocket + fallback\)) Tj
+T*
+(        location /socket.io/ {) Tj
+T*
+(            proxy_pass http://127.0.0.1:3001/socket.io/;) Tj
+T*
+(            proxy_http_version 1.1;) Tj
+T*
+(            proxy_set_header Upgrade $http_upgrade;) Tj
+T*
+(            proxy_set_header Connection "upgrade";) Tj
+T*
+(            proxy_set_header Host $host;) Tj
+T*
+(            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;) Tj
+T*
+(            proxy_set_header X-Forwarded-Proto $scheme;) Tj
+T*
+(        }) Tj
+T*
+() Tj
+T*
+(        # Endpoint de sante backend) Tj
+T*
+(        location = /health {) Tj
+T*
+(            proxy_pass http://127.0.0.1:3001/health;) Tj
+T*
+(            proxy_set_header Host $host;) Tj
+T*
+(            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;) Tj
+T*
+(            proxy_set_header X-Forwarded-Proto $scheme;) Tj
+T*
+(        }) Tj
+T*
+() Tj
+T*
+(        # Frontend SPA) Tj
+T*
+(        location / {) Tj
+T*
+(            try_files $uri /index.html;) Tj
+T*
+(        }) Tj
+T*
+(    }) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Activer la conf:) Tj
+T*
+() Tj
+T*
+(    sudo ln -s /etc/nginx/sites-available/math-duel /etc/nginx/sites-enabled/math-duel) Tj
+T*
+(    sudo nginx -t) Tj
+T*
+(    sudo systemctl reload nginx) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(10. ACTIVER HTTPS \(LET'S ENCRYPT\)) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 13 0 R >>
+endobj
+13 0 obj
+<< /Length 1405 >>
+stream
+BT
+/F1 10 Tf
+1 0 0 1 50 792 Tm
+14 TL
+(Installer Certbot:) Tj
+T*
+() Tj
+T*
+(    sudo apt install -y certbot python3-certbot-nginx) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Demander le certificat:) Tj
+T*
+() Tj
+T*
+(    sudo certbot --nginx -d duel.example.com) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Verifier le renouvellement automatique:) Tj
+T*
+() Tj
+T*
+(    sudo systemctl status certbot.timer) Tj
+T*
+(    sudo certbot renew --dry-run) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(11. PROCEDURE DE MISE A JOUR) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(A chaque nouvelle version:) Tj
+T*
+() Tj
+T*
+(    cd /opt/math-duel) Tj
+T*
+(    git pull) Tj
+T*
+(    npm ci) Tj
+T*
+(    VITE_SERVER_URL=https://duel.example.com npm run build) Tj
+T*
+(    pm2 restart math-duel-api --update-env) Tj
+T*
+(    sudo systemctl reload nginx) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(12. TESTS POST-DEPLOIEMENT) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(12.1 SANITY CHECKS) Tj
+T*
+() Tj
+T*
+(- Ouvrir `https://duel.example.com`) Tj
+T*
+(- Verifier creation de session) Tj
+T*
+(- Verifier connexion du 2e joueur) Tj
+T*
+(- Verifier duel en temps reel) Tj
+T*
+(- Verifier comportement en deconnexion/reconnexion) Tj
+T*
+() Tj
+T*
+(12.2 VERIFICATION API LOCALE) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    curl -i http://127.0.0.1:3001/health) Tj
+T*
+() Tj
+T*
+(Doit repondre `200` et `{\\"ok\\":true}`.) Tj
+T*
+() Tj
+T*
+(12.3 VERIFICATION PUBLIQUE) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    curl -I https://duel.example.com) Tj
+T*
+() Tj
+T*
+(Doit repondre `200`.) Tj
+T*
+ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 15 0 R >>
+endobj
+15 0 obj
+<< /Length 1358 >>
+stream
+BT
+/F1 10 Tf
+1 0 0 1 50 792 Tm
+14 TL
+() Tj
+T*
+(13. MONITORING ET LOGS) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(PM2) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    pm2 status) Tj
+T*
+(    pm2 logs math-duel-api) Tj
+T*
+(    pm2 monit) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(NGINX) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    sudo tail -f /var/log/nginx/access.log) Tj
+T*
+(    sudo tail -f /var/log/nginx/error.log) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(14. SAUVEGARDE MINIMALE) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(A sauvegarder regulierement:) Tj
+T*
+(- code source \(`/opt/math-duel`\)) Tj
+T*
+(- fichier PM2 \(`ecosystem.config.cjs`\)) Tj
+T*
+(- config Nginx \(`/etc/nginx/sites-available/math-duel`\)) Tj
+T*
+() Tj
+T*
+(15. DEPANNAGE RAPIDE) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(LE SITE S'AFFICHE MAIS IMPOSSIBLE DE JOUER) Tj
+T*
+() Tj
+T*
+(- verifier `VITE_SERVER_URL` utilise au build) Tj
+T*
+(- verifier la conf Nginx de `\\/socket.io\\/`) Tj
+T*
+(- verifier que PM2 tourne) Tj
+T*
+() Tj
+T*
+(ERREUR CORS) Tj
+T*
+() Tj
+T*
+(- verifier `CLIENT_ORIGIN` cote backend) Tj
+T*
+(- verifier protocole exact \(`https://`\) et domaine exact) Tj
+T*
+() Tj
+T*
+(LE BACKEND NE DEMARRE PAS) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(    pm2 logs math-duel-api --lines 200) Tj
+T*
+(    node -v) Tj
+T*
+(    ls -la /opt/math-duel/server/dist) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(502 BAD GATEWAY) Tj
+T*
+() Tj
+T*
+(- backend down ou mauvais `proxy_pass`) Tj
+T*
+(- tester `curl http://127.0.0.1:3001/health`) Tj
+T*
+ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 17 0 R >>
+endobj
+17 0 obj
+<< /Length 912 >>
+stream
+BT
+/F1 10 Tf
+1 0 0 1 50 792 Tm
+14 TL
+() Tj
+T*
+(16. VARIANTE AVEC SOUS-DOMAINE API \(OPTIONNEL\)) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Si tu preferes:) Tj
+T*
+(- Front: `https://duel.example.com`) Tj
+T*
+(- API: `https://api.duel.example.com`) Tj
+T*
+() Tj
+T*
+(Alors:) Tj
+T*
+(- build frontend avec `VITE_SERVER_URL=https://api.duel.example.com`) Tj
+T*
+(- backend avec `CLIENT_ORIGIN=https://duel.example.com`) Tj
+T*
+(- ajouter une seconde conf Nginx pour `api.duel.example.com` qui proxy tout vers) Tj
+T*
+(  `127.0.0.1:3001`) Tj
+T*
+() Tj
+T*
+(17. CHECKLIST FINALE) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(- [ ] DNS pointe vers le serveur) Tj
+T*
+(- [ ] `npm ci` OK) Tj
+T*
+(- [ ] build prod OK) Tj
+T*
+(- [ ] PM2 actif et persistant) Tj
+T*
+(- [ ] Nginx actif \(`nginx -t` OK\)) Tj
+T*
+(- [ ] HTTPS actif) Tj
+T*
+(- [ ] create/join/duel/reconnexion verifies) Tj
+T*
+() Tj
+T*
+(---) Tj
+T*
+() Tj
+T*
+(Document genere pour le projet `math-duel`.) Tj
+T*
+ET
+endstream
+endobj
+xref
+0 18
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000163 00000 n 
+0000000233 00000 n 
+0000000359 00000 n 
+0000001971 00000 n 
+0000002097 00000 n 
+0000003415 00000 n 
+0000003541 00000 n 
+0000004984 00000 n 
+0000005112 00000 n 
+0000006991 00000 n 
+0000007119 00000 n 
+0000008576 00000 n 
+0000008704 00000 n 
+0000010114 00000 n 
+0000010242 00000 n 
+trailer
+<< /Size 18 /Root 1 0 R >>
+startxref
+11205
+%%EOF
