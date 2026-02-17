@@ -165,9 +165,11 @@ function App() {
 
   useEffect(() => {
     if (!isPlaying) {
+      setAnswer("");
       setAnswerUiState("idle");
       return;
     }
+    setAnswer("");
     setAnswerUiState("idle");
   }, [activeRoundId, isPlaying]);
 
