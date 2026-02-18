@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { PlayerPublicState, PublicSessionState } from "@math-duel/shared";
 import { DuelPage } from "./DuelPage";
@@ -83,9 +83,24 @@ describe("DuelPage layout", () => {
     expect(onAnswerSubmit).toHaveBeenCalledTimes(1);
   });
 
-  it("met automatiquement le focus sur le champ réponse", () => {
+  it("garde le focus sur le champ réponse après validation", () => {
+    const { onAnswerSubmit } = renderDuel();
+    const answerInput = screen.getByLabelText("Réponse");
+    const submitButton = screen.getByRole("button", { name: "Valider" });
+
+    answerInput.focus();
+    fireEvent.pointerDown(submitButton);
+    fireEvent.submit(screen.getByTestId("duel-input-zone"));
+
+    expect(onAnswerSubmit).toHaveBeenCalledTimes(1);
+    expect(answerInput).toHaveFocus();
+  });
+
+  it("met automatiquement le focus sur le champ réponse", async () => {
     renderDuel();
-    expect(screen.getByLabelText("Réponse")).toHaveFocus();
+    await waitFor(() => {
+      expect(screen.getByLabelText("Réponse")).toHaveFocus();
+    });
   });
 
   it("affiche un chrono avant le démarrage de la manche", () => {

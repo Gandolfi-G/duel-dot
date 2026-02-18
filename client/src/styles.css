@@ -501,7 +501,7 @@ button:hover:not(:disabled) {
 
 .toast-stack {
   position: absolute;
-  top: 5.5rem;
+  top: calc(env(safe-area-inset-top, 0px) + 5.5rem);
   right: 1rem;
   width: min(280px, 55vw);
   display: grid;
@@ -778,12 +778,6 @@ button:hover:not(:disabled) {
 
   .duel-input-zone {
     grid-template-columns: 1fr;
-  }
-
-  .toast-stack {
-    top: auto;
-    bottom: 6.2rem;
-    right: 0.75rem;
   }
 
   .score-grid {

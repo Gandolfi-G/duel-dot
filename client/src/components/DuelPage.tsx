@@ -60,7 +60,12 @@ export function DuelPage({
     if (!canAnswer) {
       return;
     }
-    answerInputRef.current?.focus();
+    const raf = requestAnimationFrame(() => {
+      answerInputRef.current?.focus({ preventScroll: true });
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+    };
   }, [canAnswer, question?.roundId]);
 
   const immediateFeedbackText =
@@ -136,6 +141,12 @@ export function DuelPage({
         onSubmit={(event) => {
           event.preventDefault();
           onAnswerSubmit();
+          requestAnimationFrame(() => {
+            if (!canAnswer) {
+              return;
+            }
+            answerInputRef.current?.focus({ preventScroll: true });
+          });
         }}
         className={`duel-input-zone input-${answerUiState}`}
         data-testid="duel-input-zone"
@@ -150,7 +161,12 @@ export function DuelPage({
           disabled={!canAnswer}
           aria-label="Réponse"
         />
-        <button type="submit" className="primary-btn" disabled={!canAnswer}>
+        <button
+          type="submit"
+          className="primary-btn"
+          disabled={!canAnswer}
+          onPointerDown={(event) => event.preventDefault()}
+        >
           Valider
         </button>
       </form>
