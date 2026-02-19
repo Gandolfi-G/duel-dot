@@ -78,8 +78,9 @@ describe("DuelPage layout", () => {
 
   it("soumet la réponse avec la touche Entrée", () => {
     const { onAnswerSubmit } = renderDuel();
+    const answerInput = screen.getByLabelText("Réponse");
 
-    fireEvent.submit(screen.getByTestId("duel-input-zone"));
+    fireEvent.keyDown(answerInput, { key: "Enter", code: "Enter" });
     expect(onAnswerSubmit).toHaveBeenCalledTimes(1);
   });
 
@@ -90,7 +91,7 @@ describe("DuelPage layout", () => {
 
     answerInput.focus();
     fireEvent.pointerDown(submitButton);
-    fireEvent.submit(screen.getByTestId("duel-input-zone"));
+    fireEvent.click(submitButton);
 
     expect(onAnswerSubmit).toHaveBeenCalledTimes(1);
     expect(answerInput).toHaveFocus();

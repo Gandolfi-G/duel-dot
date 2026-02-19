@@ -57,6 +57,25 @@ export function DuelPage({
       ? Math.max(1, Math.ceil(state.disconnectGraceRemainingMs / 1000))
       : null;
 
+  const refocusAnswerInput = () => {
+    requestAnimationFrame(() => {
+      if (!isDuelPlaying) {
+        return;
+      }
+      answerInputRef.current?.focus({ preventScroll: true });
+    });
+  };
+
+  const submitAnswerIntent = () => {
+    if (!canSubmitAnswer) {
+      refocusAnswerInput();
+      return;
+    }
+
+    onAnswerSubmit();
+    refocusAnswerInput();
+  };
+
   useEffect(() => {
     if (!isDuelPlaying) {
       return;
@@ -138,39 +157,34 @@ export function DuelPage({
         )}
       </div>
 
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          onAnswerSubmit();
-          requestAnimationFrame(() => {
-            if (!isDuelPlaying) {
-              return;
-            }
-            answerInputRef.current?.focus({ preventScroll: true });
-          });
-        }}
-        className={`duel-input-zone input-${answerUiState}`}
-        data-testid="duel-input-zone"
-      >
+      <div className={`duel-input-zone input-${answerUiState}`} data-testid="duel-input-zone">
         <input
           ref={answerInputRef}
           type="number"
           inputMode="numeric"
           value={answer}
+          onKeyDown={(event) => {
+            if (event.key !== "Enter") {
+              return;
+            }
+            event.preventDefault();
+            submitAnswerIntent();
+          }}
           onChange={(event) => onAnswerChange(event.target.value)}
           placeholder="Ta réponse"
           disabled={!isDuelPlaying}
           aria-label="Réponse"
         />
         <button
-          type="submit"
+          type="button"
           className="primary-btn"
           disabled={!canSubmitAnswer}
+          onClick={submitAnswerIntent}
           onPointerDown={(event) => event.preventDefault()}
         >
           Valider
         </button>
-      </form>
+      </div>
       <p className={`answer-immediate-feedback feedback-${answerUiState}`} role="status" aria-live="polite">
         {immediateFeedbackText}
       </p>

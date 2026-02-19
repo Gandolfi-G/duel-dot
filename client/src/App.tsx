@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import type {
   AnswerFeedback,
   JoinSessionResponse,
@@ -39,6 +39,7 @@ function App() {
   const { toasts, pushToast, clearToasts } = useToastQueue(2000, 3);
   const activeRoundId = state?.currentQuestion?.roundId ?? null;
   const isPlaying = state?.phase === "playing";
+  const previousRoundIdRef = useRef<string | null>(null);
 
   const applyJoinResult = useCallback(
     (response: Extract<JoinSessionResponse, { ok: true }>) => {
@@ -165,12 +166,18 @@ function App() {
 
   useEffect(() => {
     if (!isPlaying) {
+      previousRoundIdRef.current = activeRoundId;
       setAnswer("");
       setAnswerUiState("idle");
       return;
     }
-    setAnswer("");
-    setAnswerUiState("idle");
+
+    if (previousRoundIdRef.current !== activeRoundId) {
+      setAnswer("");
+      setAnswerUiState("idle");
+    }
+
+    previousRoundIdRef.current = activeRoundId;
   }, [activeRoundId, isPlaying]);
 
   useEffect(() => {
