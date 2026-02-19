@@ -60,10 +60,40 @@ const COUNTDOWN_TICK_MS = 200;
 const ROUND_TIMEOUT_MS = 10_000;
 const DISCONNECT_GRACE_MS = 60_000;
 const PORT = Number(process.env.PORT ?? 3001);
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ?? "http://localhost:5173";
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN?.trim() ?? "";
+const CLIENT_ORIGINS = CLIENT_ORIGIN
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter((origin) => origin.length > 0);
+const DEFAULT_DEV_ORIGINS = ["http://localhost:5173"];
+const isProduction = process.env.NODE_ENV === "production";
+
+function isAllowedOrigin(origin: string | undefined): boolean {
+  // Non-browser clients (curl, healthchecks) can omit Origin.
+  if (!origin) {
+    return true;
+  }
+
+  const configuredOrigins = CLIENT_ORIGINS.length > 0 ? CLIENT_ORIGINS : DEFAULT_DEV_ORIGINS;
+  if (configuredOrigins.includes(origin)) {
+    return true;
+  }
+
+  if (isProduction || CLIENT_ORIGINS.length > 0) {
+    return false;
+  }
+
+  return /^http:\/\/localhost:\d+$/.test(origin) || /^http:\/\/127\.0\.0\.1:\d+$/.test(origin);
+}
 
 const app = express();
-app.use(cors({ origin: CLIENT_ORIGIN }));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      callback(null, isAllowedOrigin(origin));
+    }
+  })
+);
 app.get("/health", (_request, response) => {
   response.json({ ok: true });
 });
@@ -74,7 +104,9 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEve
   httpServer,
   {
     cors: {
-      origin: CLIENT_ORIGIN
+      origin: (origin, callback) => {
+        callback(null, isAllowedOrigin(origin));
+      }
     }
   }
 );

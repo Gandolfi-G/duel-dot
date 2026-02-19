@@ -42,7 +42,8 @@ export function DuelPage({
   const targetScore = state.targetScore;
   const opponentScore = opponent?.score ?? 0;
   const question = state.currentQuestion;
-  const canAnswer = state.phase === "playing" && Boolean(question);
+  const isDuelPlaying = state.phase === "playing";
+  const canSubmitAnswer = isDuelPlaying && Boolean(question);
   const winner = state.players.find((player) => player.playerId === state.winnerPlayerId);
   const localRematchRequested = state.rematchRequestedBy.includes(localPlayer.playerId);
   const opponentName = opponent?.nickname ?? "Adversaire";
@@ -57,7 +58,7 @@ export function DuelPage({
       : null;
 
   useEffect(() => {
-    if (!canAnswer) {
+    if (!isDuelPlaying) {
       return;
     }
     const raf = requestAnimationFrame(() => {
@@ -66,7 +67,7 @@ export function DuelPage({
     return () => {
       cancelAnimationFrame(raf);
     };
-  }, [canAnswer, question?.roundId]);
+  }, [isDuelPlaying, question?.roundId]);
 
   const immediateFeedbackText =
     answerUiState === "correct"
@@ -142,7 +143,7 @@ export function DuelPage({
           event.preventDefault();
           onAnswerSubmit();
           requestAnimationFrame(() => {
-            if (!canAnswer) {
+            if (!isDuelPlaying) {
               return;
             }
             answerInputRef.current?.focus({ preventScroll: true });
@@ -158,13 +159,13 @@ export function DuelPage({
           value={answer}
           onChange={(event) => onAnswerChange(event.target.value)}
           placeholder="Ta réponse"
-          disabled={!canAnswer}
+          disabled={!isDuelPlaying}
           aria-label="Réponse"
         />
         <button
           type="submit"
           className="primary-btn"
-          disabled={!canAnswer}
+          disabled={!canSubmitAnswer}
           onPointerDown={(event) => event.preventDefault()}
         >
           Valider

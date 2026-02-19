@@ -103,6 +103,16 @@ describe("DuelPage layout", () => {
     });
   });
 
+  it("garde le champ actif entre deux questions pendant la phase playing", () => {
+    renderDuel({
+      phase: "playing",
+      currentQuestion: null
+    });
+
+    expect(screen.getByLabelText("Réponse")).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Valider" })).toBeDisabled();
+  });
+
   it("affiche un chrono avant le démarrage de la manche", () => {
     renderDuel({
       phase: "countdown",
